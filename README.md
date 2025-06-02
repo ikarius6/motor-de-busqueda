@@ -24,6 +24,12 @@ Luego ejecuta la aplicación.
 python app.py
 ```
 
+Prueba la API con:
+
+```bash
+http GET http://localhost:5001/search?q=excelente%20jardinero,%20barato%20por%20el%20centro
+```
+
 ## Licencia
 
 MIT
