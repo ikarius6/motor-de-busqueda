@@ -8,6 +8,12 @@ Este es un motor de búsqueda para un directorio de negocios. Utiliza una combin
 pip install -r requirements.txt
 ```
 
+Instala el modelo de spacy con español.
+
+```bash
+python -m spacy download es_core_news_sm
+```
+
 Establece tu clave de API de Mapbox en el archivo `.env`.
 
 ## Uso
