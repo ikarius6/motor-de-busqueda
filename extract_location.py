@@ -170,9 +170,15 @@ class ExtractLocation:
             return False
             
         # Filtrar palabras comunes que no son ubicaciones
+        from patterns import rating_patterns, price_patterns
         invalid_words = {
             "excelente", "bueno", "mejor", "cerca", "lejos", 
             "barato", "caro", "rápido", "servicio", "trabajo"
         }
+        # Añadir todos los sinónimos de rating y price
+        for lst in rating_patterns.values():
+            invalid_words.update([w.lower() for w in lst])
+        for lst in price_patterns.values():
+            invalid_words.update([w.lower() for w in lst])
         
         return location.lower() not in invalid_words
