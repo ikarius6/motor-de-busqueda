@@ -1,0 +1,33 @@
+# Motor de Búsqueda
+
+Este es un motor de búsqueda para un directorio de negocios. Utiliza una combinación de coincidencia por palabras clave, coincidencia difusa y coincidencia semántica para encontrar los mejores resultados para una consulta dada.
+
+## Instalación
+
+```bash
+pip install -r requirements.txt
+```
+
+Establece tu clave de API de Mapbox en el archivo `.env`.
+
+## Uso
+
+Ejecuta primero el script de sincronización para crear los archivos de *embeddings* y metadatos.
+
+```bash
+python sync.py
+```
+
+Luego ejecuta la aplicación.
+
+```bash
+python app.py
+```
+
+## Licencia
+
+MIT
+
+## Autor
+
+Mr.Jack (ikarius6)

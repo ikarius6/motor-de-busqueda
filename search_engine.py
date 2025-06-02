@@ -11,6 +11,7 @@ from keyword_matcher import KeywordMatcher
 from collections import Counter
 from mapbox_utils import geocode_location
 from patterns import rating_patterns, price_patterns
+from extract_location import ExtractLocation
 
 class SearchEngine:
     def __init__(self, embedding_file='category_embeddings.npy', metadata_file='category_metadata.json'):
@@ -31,6 +32,7 @@ class SearchEngine:
             price_label_file='price_labels.npy'
         )
         self.matcher = Matcher(self.nlp.vocab)
+        self.extract_location = ExtractLocation(self.nlp, self.matcher)
         self._load_data()
 
     def _load_data(self):
@@ -44,15 +46,7 @@ class SearchEngine:
         self.index = faiss.IndexFlatIP(self.embeddings.shape[1])
         faiss.normalize_L2(self.embeddings)
         self.index.add(self.embeddings)
-        # Patrones para ubicaciones mexicanas para spacy
-        patterns = [
-            [{"LOWER": {"IN": ["en", "de", "por", "cerca"]}},
-             {"LOWER": {"IN": ["el", "la", "los", "las"]}, "OP": "?"},
-             {"ENT_TYPE": "LOC"}],
-            [{"LOWER": {"IN": ["en", "de", "por", "cerca"]}},
-             {"IS_ALPHA": True, "OP": "+"}],
-        ]
-        self.matcher.add("LOCATION_PATTERN", patterns)
+        
 
     def _lemmatize(self, text):
         doc = self.nlp(text)
@@ -76,22 +70,8 @@ class SearchEngine:
         most_common = count.most_common(1)[0][0]
         return most_common
 
-    def extract_location(self, query):
-        doc = self.nlp(query)
-        
-        # Primero buscar entidades nombradas de tipo LOC
-        locations = [ent.text for ent in doc.ents if ent.label_ == "LOC"]
-        
-        # Si no encuentra, usar matcher de patrones
-        if not locations:
-            matches = self.matcher(doc)
-            for match_id, start, end in matches:
-                locations.append(doc[start:end].text)
-        
-        return locations[0] if locations else None 
-
     def infer_location(self, query):
-        location = self.extract_location(query)
+        location = self.extract_location.extract_location(query)
         if location:
             coords = geocode_location(f"{location}, México")
             if coords:
